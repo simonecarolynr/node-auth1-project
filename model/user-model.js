@@ -2,7 +2,7 @@ const db = require('../data/dbConfig')
 
 // Add a user and hash the password
 function addUser(){
-
+    
 }
 
 // Log in the user, authenticate the credentials
