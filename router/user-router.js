@@ -1,9 +1,8 @@
 const express = require('express')
-
+const bcrypt = require('bcryptjs')
 const db = require('../model/user-model')
 
-const bcrypt = require('bcryptjs')
-const validate = require("../middleware/user-middleware")
+const userMiddleware = require("../middleware/user-middleware")
 
 const user = express.Router()
 
@@ -11,7 +10,7 @@ const user = express.Router()
 user.post('/api/register', async (req, res, next) => {
     try {
         const { username, password } = req.body
-		const user = await Users.findBy({ username }).first()
+		const user = await db.findBy({ username }).first()
 
 		if (user) {
 			return res.status(409).json({
@@ -19,7 +18,7 @@ user.post('/api/register', async (req, res, next) => {
 			})
 		}
 
-		const newUser = await Users.add({
+		const newUser = await db.addUser({
 			username,
 			password: await bcrypt.hash(password, 15),
 		})
@@ -35,7 +34,7 @@ user.post('/api/register', async (req, res, next) => {
 user.post('/api/login', async (req, res, next) => {
     try {
 		const { username, password } = req.body
-		const user = await Users.findBy({ username }).first()
+		const user = await db.findBy({ username }).first()
 		
 		if (!user) {
 			return res.status(401).json({
@@ -64,11 +63,12 @@ user.post('/api/login', async (req, res, next) => {
 
 
 //RETRIEVE the users, if authorized
-user.get('/api/users', async (req, res, next) => {
+user.get('/api/users', userMiddleware.restrict(), async (req, res, next) => {
     try {
-        res.json(await db.find())
+        res.json(await db.getAllUsers())
     } catch (err) {
         next(err)
     }
 })
 
+module.exports = user

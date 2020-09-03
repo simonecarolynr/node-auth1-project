@@ -7,7 +7,7 @@ function addUser(userCredentials){
 }
 
 // Log in the user, authenticate the credentials
-function loginUser(filter){
+function findBy(filter){
     return db("users")
         .select("id", "username", "password")
         .where(filter)
@@ -21,6 +21,6 @@ function getAllUsers(){
 
 module.exports = {
     addUser,
-    loginUser,
+    findBy,
     getAllUsers
 }
